@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public final class Parser {
@@ -12,16 +11,15 @@ public final class Parser {
     private static final char QUOTING_CHAR = '"';
     private static final String EMPTY_BUF = "";
     private static final char DEREF_VAR = '$';
-    private static final Logger LOGGER = Logger.getLogger("[PARSER]");
 
-    public static class ParseError {
+    private static class ParseError {
         private IOException e = null;
 
-        public void setE(String msg) {
+        void setE(String msg) {
             e = e == null ? new IOException(msg) : e;
         }
 
-        public IOException getE() {
+        IOException getE() {
             return e;
         }
     }

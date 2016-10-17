@@ -14,7 +14,7 @@ public class Cat implements Command {
             throw new CommandFailedException("Cat: not enough arguments.");
         }
 
-        String path = args.get(0);//.calculate();
+        String path = args.get(0);
         try (Stream<String> stream = Files.lines(Paths.get(path))) {
             String result = stream.collect(Collectors.joining("\n"));
             System.out.println(result);
@@ -23,13 +23,4 @@ public class Cat implements Command {
             throw new CommandFailedException("Incorrect input file name!");
         }
     }
-
-    @Override
-    public CommandType getType() {
-        return CommandType.cat;
-    }
-
-    // Possible development:
-    // 1. Output to the stream rather than hardcoded std output.
-    // 2. Add the support for the relative paths as well.
 }

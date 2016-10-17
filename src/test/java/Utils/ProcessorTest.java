@@ -26,8 +26,8 @@ public class ProcessorTest {
         assertEquals(true, processor.process("x = cde"));
         assertEquals(false, processor.process("exit"));
         assertEquals(true, processor.process("echo $x"));
-        assertEquals(true, "cat " + file.getPath());
-        assertEquals(true, "wc " + file.getPath());
+        assertEquals(true, processor.process("cat " + file.getPath()));
+        assertEquals(true, processor.process("wc " + file.getPath()));
     }
 
 }

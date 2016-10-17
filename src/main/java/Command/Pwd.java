@@ -10,8 +10,4 @@ public class Pwd implements Command {
         return workingDir;
     }
 
-    @Override
-    public CommandType getType() {
-        return CommandType.pwd;
-    }
 }

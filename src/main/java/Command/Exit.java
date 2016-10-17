@@ -9,8 +9,4 @@ public class Exit implements Command {
         return null;
     }
 
-    @Override
-    public CommandType getType() {
-        return CommandType.exit;
-    }
 }

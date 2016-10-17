@@ -20,7 +20,7 @@ public class Wc implements Command {
         }
 
         Stats stats = new Stats();
-        String path = args.get(0);//.calculate();
+        String path = args.get(0);
 
         try (Stream<String> stream = Files.lines(Paths.get(path))) {
             stream.forEach(line -> {
@@ -42,10 +42,4 @@ public class Wc implements Command {
         System.out.println(result);
         return result;
     }
-
-    @Override
-    public Command.CommandType getType() {
-        return CommandType.wc;
-    }
-    // Let's do counting for only one and only file for now.
 }

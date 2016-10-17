@@ -9,13 +9,9 @@ public class Echo implements Command {
             throw new CommandFailedException("Echo: not enough arguments!");
         }
 
-        String result = args.get(0);//.calculate();
+        String result = args.get(0);
         System.out.println(result);
         return result;
     }
 
-    @Override
-    public CommandType getType() {
-        return CommandType.echo;
-    }
 }
