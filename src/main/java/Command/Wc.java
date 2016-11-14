@@ -6,13 +6,10 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Stream;
 
+/**
+ * Counts the statistics of the provided file: the number of words, the number of lines and the number of bytes.
+ */
 public class Wc implements Command {
-    private class Stats {
-        public int words = 0;
-        public int lines = 0;
-        public long bytes = 0;
-    }
-
     @Override
     public String execute(List<String> args) throws CommandFailedException {
         if (args.size() < 1) {
@@ -41,5 +38,11 @@ public class Wc implements Command {
                 + Long.toString(stats.bytes) + " bytes.";
         System.out.println(result);
         return result;
+    }
+
+    private static class Stats {
+        public int words = 0;
+        public int lines = 0;
+        public long bytes = 0;
     }
 }

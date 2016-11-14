@@ -22,12 +22,12 @@ public class ProcessorTest {
     @Test
     public void testProcess() throws Exception {
         Processor processor = Processor.getInstance();
-        assertEquals(false, processor.process("x = abc | pwd | echo | exit"));
-        assertEquals(true, processor.process("x = cde"));
-        assertEquals(false, processor.process("exit"));
-        assertEquals(true, processor.process("echo $x"));
-        assertEquals(true, processor.process("cat " + file.getPath()));
-        assertEquals(true, processor.process("wc " + file.getPath()));
+        assertFalse(processor.process("x = abc | pwd | echo | exit"));
+        assertTrue(processor.process("x = cde"));
+        assertFalse(processor.process("exit"));
+        assertTrue(processor.process("echo $x"));
+        assertTrue(processor.process("cat " + file.getPath()));
+        assertTrue(processor.process("wc " + file.getPath()));
     }
 
 }

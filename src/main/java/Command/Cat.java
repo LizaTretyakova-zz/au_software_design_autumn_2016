@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Prints the contents of the provided file to console.
+ */
 public class Cat implements Command {
     @Override
     public String execute(List<String> args) throws CommandFailedException {

@@ -6,30 +6,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Parses the given line of input.
+ */
 public final class Parser {
     private static final String DELIMITER = " ";
     private static final char QUOTING_CHAR = '"';
     private static final String EMPTY_BUF = "";
     private static final char DEREF_VAR = '$';
-
-    private static class ParseError {
-        private IOException e = null;
-
-        void setE(String msg) {
-            e = e == null ? new IOException(msg) : e;
-        }
-
-        IOException getE() {
-            return e;
-        }
-    }
-
     private static Parser instance = null;
 
-    private Parser() {}
+    private Parser() {
+    }
 
+    /**
+     * A singleton implementation method.
+     *
+     * @return the instance of the parser
+     */
     public static Parser getInstance() {
-        if(instance == null) {
+        if (instance == null) {
             instance = new Parser();
         }
         return instance;
@@ -41,9 +37,9 @@ public final class Parser {
         boolean accumulating = false;
         ArrayList<String> result = new ArrayList<>();
 
-        for(String token: raw) {
-            if(!accumulating) {
-                if(token.charAt(0) == QUOTING_CHAR && token.charAt(token.length() - 1) != QUOTING_CHAR) {
+        for (String token : raw) {
+            if (!accumulating) {
+                if (token.charAt(0) == QUOTING_CHAR && token.charAt(token.length() - 1) != QUOTING_CHAR) {
                     accumulating = true;
                     buf = token; // Assuming, as discussed, that there are no such cases as `echo "abc def "123`.
                 } else {
@@ -51,7 +47,7 @@ public final class Parser {
                 }
             } else {
                 buf += DELIMITER + token;
-                if(token.charAt(token.length() - 1) == QUOTING_CHAR) {
+                if (token.charAt(token.length() - 1) == QUOTING_CHAR) {
                     result.add(buf);
                     buf = EMPTY_BUF;
                     accumulating = false;
@@ -67,9 +63,9 @@ public final class Parser {
     }
 
     private String substitute(String token, HashMap<String, String> envVars, ParseError e) {
-        if(token.charAt(0) == DEREF_VAR) {
+        if (token.charAt(0) == DEREF_VAR) {
             String variable = token.substring(1);
-            if(!envVars.containsKey(variable)) {
+            if (!envVars.containsKey(variable)) {
                 e.setE("Error while parsing: unknown variable.");
             } else {
                 variable = envVars.get(variable);
@@ -80,28 +76,48 @@ public final class Parser {
     }
 
     private String substituteInline(String token, HashMap<String, String> envVars, ParseError e) {
-        if(token.charAt(0) == QUOTING_CHAR) {
+        if (token.charAt(0) == QUOTING_CHAR) {
             String rawToken = token.substring(1, token.length() - 1);
             return tokenize(rawToken, e).stream()
-                        .map(subToken -> substitute(subToken, envVars, e))
-                        .collect(Collectors.joining(DELIMITER));
+                    .map(subToken -> substitute(subToken, envVars, e))
+                    .collect(Collectors.joining(DELIMITER));
         } else {
             return token;
         }
     }
 
+    /**
+     * Does the parsing.
+     *
+     * @param line input
+     * @param envVars environment
+     * @return the list of processed tokens with all substitutions done
+     * @throws IOException
+     */
     public List<String> parse(String line, HashMap<String, String> envVars) throws IOException {
         ParseError e = new ParseError();
         List<String> result = tokenize(line, e).stream()
-                                        .flatMap(token -> tokenize(substitute(token, envVars, e), e).stream())
-                                        .map(token -> substituteInline(token, envVars, e))
-                                        .collect(Collectors.toList());
+                .flatMap(token -> tokenize(substitute(token, envVars, e), e).stream())
+                .map(token -> substituteInline(token, envVars, e))
+                .collect(Collectors.toList());
 
 
-        if(e.getE() != null) {
+        if (e.getE() != null) {
             throw e.getE();
         }
 
         return result;
+    }
+
+    private static class ParseError {
+        private IOException e = null;
+
+        IOException getE() {
+            return e;
+        }
+
+        void setE(String msg) {
+            e = e == null ? new IOException(msg) : e;
+        }
     }
 }

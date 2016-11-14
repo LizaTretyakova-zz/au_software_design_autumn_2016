@@ -5,9 +5,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import java.io.*;
-
-import static org.junit.Assert.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.StringReader;
 
 public class CLITest {
     @Rule

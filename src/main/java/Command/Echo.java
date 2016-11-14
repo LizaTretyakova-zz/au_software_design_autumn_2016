@@ -2,6 +2,9 @@ package Command;
 
 import java.util.List;
 
+/**
+ * Prints the provided input to console.
+ */
 public class Echo implements Command {
     @Override
     public String execute(List<String> args) throws CommandFailedException {
