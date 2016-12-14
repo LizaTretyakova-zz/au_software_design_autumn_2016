@@ -69,7 +69,7 @@ public class MessengerClient {
 
         channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
 
-        logger.log(Level.INFO, "[CLIENT] It's all over now.");
+        logger.log(Level.INFO, "[CLIENT] It's over now.");
     }
 
     public void sendMessage(String text) throws InterruptedException {

@@ -1,5 +1,10 @@
 import org.junit.Test;
 
+import java.io.IOException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
+
 /**
  * Created by liza on 11.12.16.
  */
@@ -7,20 +12,15 @@ public class MessengerTest {
 
     @Test
     public void test() throws Exception {
-//        MessengerServer.main(null);
-//        MessengerClient.testRun(null);
-//        System.exit(0);
-
-        MessengerServer server = new MessengerServer(8980, "RedLightingSpot");
-//        server.sendMessage("Johny?");
-
-        MessengerClient client = new MessengerClient("localhost", 8980, "JohnyCatswill");
+        MessengerServer server = new MessengerServer(8982, "RedLightingSpot");
+        MessengerClient client = new MessengerClient("localhost", 8982, "JohnyCatswill");
+        server.waitConnection();
+        server.sendMessage("Johny?");
         client.sendMessage("Meow");
-        // server.sendMessage("Johny?");
-        // server.sendMessage("Good cat!");
+        server.sendMessage("Good cat!");
         client.sendMessage("MeowMeow");
         client.sendMessage("MeowMeowMeow");
-        // server.sendMessage("Buy!");
+        server.sendMessage("Buy!");
         client.shutdown();
     }
 }

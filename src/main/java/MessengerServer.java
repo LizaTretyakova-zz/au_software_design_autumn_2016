@@ -3,6 +3,8 @@ import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
 
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,7 +20,8 @@ public class MessengerServer {
     private final Server server;
     private final String name;
 
-    protected StreamObserver<InstantMessenger.Message> responseObserver = null;
+    private final CompletableFuture<StreamObserver<InstantMessenger.Message>> responseObserverGetter;
+    protected StreamObserver<InstantMessenger.Message> responseObserver;
 
     /** Create a Message server listening on {@code port} */
     public MessengerServer(int port, String name) throws IOException {
@@ -29,6 +32,7 @@ public class MessengerServer {
     public MessengerServer(ServerBuilder<?> serverBuilder, int port, String name) throws IOException {
         this.port = port;
         this.name = name;
+        responseObserverGetter = new CompletableFuture<>();
         server = serverBuilder.addService(new MessengerService()).build();
 
         start();
@@ -42,10 +46,24 @@ public class MessengerServer {
         responseObserver.onNext(Utils.craftMessage(text, name));
     }
 
+    /**
+     * Blocks until a client comes.
+     */
+    public void waitConnection() {
+        try {
+            logger.log(Level.INFO, "[SERVER] Obtaining responseObserver");
+            responseObserver = responseObserverGetter.get();
+            logger.log(Level.INFO, "[SERVER] Obtained responseObserver");
+        } catch (InterruptedException | ExecutionException e) {
+            // Should never happen
+            throw new RuntimeException(e);
+        }
+    }
+
     /** Start serving requests. */
     private void start() throws IOException {
         server.start();
-        logger.info("Server started, listening on " + port);
+        logger.info("[SERVER] Started, listening on " + port);
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
@@ -61,7 +79,6 @@ public class MessengerServer {
     private void shutdown() {
         if (server != null) {
             server.shutdown();
-            responseObserver = null;
         }
     }
 
@@ -80,8 +97,8 @@ public class MessengerServer {
         public StreamObserver<InstantMessenger.Message> sendMessage(
                 StreamObserver<InstantMessenger.Message> responseObserver) {
 
-            MessengerServer.this.responseObserver = responseObserver;
             logger.log(Level.INFO, "OK");
+            responseObserverGetter.complete(responseObserver);
             return new StreamObserver<InstantMessenger.Message>() {
                 @Override
                 public void onNext(InstantMessenger.Message msg) {
