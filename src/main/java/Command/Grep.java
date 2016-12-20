@@ -11,20 +11,14 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Finds a given substring or regex in a given file.
+ * Some flags available:
+ * -i: ignore case;
+ * -w: match only the whole word
+ * -A: print several lines of context
+ */
 public class Grep implements Command {
-
-    public static class State {
-        @Parameter(names = "-i", description = "Ignore case")
-        public boolean caseInsensitive = false;
-
-        @Parameter(names = "-w", description = "Match only the whole word")
-        public boolean wholeWord = false;
-
-        @Parameter(names = "-A", description = "Print some lines")
-        public int afterLines = 0;
-
-        public int cnt = 0;
-    }
 
     @Override
     public String execute(List<String> args) throws CommandFailedException {
@@ -35,14 +29,14 @@ public class Grep implements Command {
         String path = args.get(args.size() - 1);
         try (Stream<String> stream = Files.lines(Paths.get(path))) {
             String result = stream.filter(line -> {
-               state.cnt--;
-               if(pattern.matcher(line).find()) {
-                   state.cnt = state.afterLines;
-                   return true;
-               } else if(state.cnt >= 0) {
+                state.cnt--;
+                if (pattern.matcher(line).find()) {
+                    state.cnt = state.afterLines;
                     return true;
-               }
-               return false;
+                } else if (state.cnt >= 0) {
+                    return true;
+                }
+                return false;
             }).collect(Collectors.joining("\n"));
             System.out.println(result);
             return result;
@@ -54,7 +48,7 @@ public class Grep implements Command {
     private State getSettings(List<String> args) {
         State state = new State();
         String[] argv = new String[args.size() - 2];
-        for(int i = 0; i < args.size() - 2; ++i) {
+        for (int i = 0; i < args.size() - 2; ++i) {
             argv[i] = args.get(i);
         }
         new JCommander(state, argv);
@@ -63,15 +57,31 @@ public class Grep implements Command {
 
     private Pattern constructRegex(List<String> args, State state) {
         String patternArg = args.get(args.size() - 2);
-        if(state.wholeWord) {
+        if (state.wholeWord) {
             patternArg = "\\b" + patternArg + "\\b";
         }
         Pattern pattern;
-        if(state.caseInsensitive) {
+        if (state.caseInsensitive) {
             pattern = Pattern.compile(patternArg, Pattern.CASE_INSENSITIVE);
         } else {
             pattern = Pattern.compile(patternArg);
         }
         return pattern;
+    }
+
+    /**
+     * Describes the set of flags provided by user.
+     */
+    private static class State {
+        @Parameter(names = "-i", description = "Ignore case")
+        public boolean caseInsensitive = false;
+
+        @Parameter(names = "-w", description = "Match only the whole word")
+        public boolean wholeWord = false;
+
+        @Parameter(names = "-A", description = "Print some lines")
+        public int afterLines = 0;
+
+        public int cnt = 0;
     }
 }
