@@ -5,6 +5,7 @@ import Utils.Processor;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 /**
  * The main class running the whole process.
@@ -33,5 +34,10 @@ public class CLI {
         } catch (IOException | RuntimeException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    public static void main(String[] args) {
+        BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+        run(input);
     }
 }
