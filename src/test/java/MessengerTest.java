@@ -32,6 +32,7 @@ public class MessengerTest {
             Controller controller = new Controller();
             gui.init(controller);
             System.out.println("meow");
+            gui.waitUntilExit();
         };
 
         pool.execute(task);

@@ -16,6 +16,10 @@ public class GUI {
     private static final int DISCONNECTED = 0;
     private static final int CONNECTED = 1;
 
+    // Status constants.
+    private static final int OVER = 0;
+    private static final int RUNNING = 1;
+
     private static final Logger logger = Logger.getLogger(GUI.class.getName());
 
     // Indicates the end of a session.
@@ -42,9 +46,10 @@ public class GUI {
 
     // TCP Components
     private Controller controller;
-    private BufferedReader in = null;
-    private PrintWriter out = null;
 
+    // Synchronization Components.
+    private final Object monitor;
+    private int isRunning;
 
     private JPanel initOptionsPane() {
         JPanel pane;
@@ -225,8 +230,12 @@ public class GUI {
                         "Are You Sure to Close this Application?",
                         "Exit Confirmation", JOptionPane.YES_NO_OPTION,
                         JOptionPane.QUESTION_MESSAGE, null, null, null);
-                if (confirm == 0) {
-                    System.exit(1);
+                if (confirm == OVER) {
+                    synchronized (monitor) {
+                        isRunning = OVER;
+                        monitor.notifyAll();
+                    }
+                    // System.exit(1);
                 }
             }
         };
@@ -249,7 +258,21 @@ public class GUI {
         }
     }
 
+    public void waitUntilExit() {
+        synchronized (monitor) {
+            try {
+                while(isRunning != OVER) {
+                    monitor.wait();
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public GUI() {
         this.connectionStatus = new AtomicInteger(DISCONNECTED);
+        monitor = new Object();
+        isRunning = RUNNING;
     }
 }
