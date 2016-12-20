@@ -1,3 +1,5 @@
+package Model;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -6,9 +8,13 @@ import java.util.List;
  */
 public class MessageQueue {
 
-    List<InstantMessenger.Message> queue = new ArrayList<>();
+    private List<InstantMessenger.Message> queue = new ArrayList<>();
 
     public void store(InstantMessenger.Message msg) {
         queue.add(msg);
+    }
+
+    public boolean isEmpty() {
+        return queue.isEmpty();
     }
 }

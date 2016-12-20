@@ -1,3 +1,5 @@
+package Model;
+
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
@@ -11,14 +13,12 @@ import java.util.logging.Logger;
 /**
  * Created by liza on 11.12.16.
  */
-public class MessengerServer {
+public class MessengerServer extends Messenger {
 
     private static final Logger logger = Logger.getLogger(MessengerServer.class.getName());
     
-    private final MessageQueue messageQueue = new MessageQueue();
     private final int port;
     private final Server server;
-    private final String name;
 
     private final CompletableFuture<StreamObserver<InstantMessenger.Message>> responseObserverGetter;
     protected StreamObserver<InstantMessenger.Message> responseObserver;
@@ -30,25 +30,24 @@ public class MessengerServer {
 
     /** Create a RouteGuide server using serverBuilder as a base and features as data. */
     public MessengerServer(ServerBuilder<?> serverBuilder, int port, String name) throws IOException {
+        super(name);
+
         this.port = port;
-        this.name = name;
         responseObserverGetter = new CompletableFuture<>();
         server = serverBuilder.addService(new MessengerService()).build();
 
         start();
     }
 
-    public void sendMessage(String text) throws IOException {
-        if(responseObserver == null) {
-            throw new IOException("No client provided.");
-        }
-
-        responseObserver.onNext(Utils.craftMessage(text, name));
+    @Override
+    public void sendMessage(String text) {
+        responseObserver.onNext(craftMessage(text, name));
     }
 
     /**
      * Blocks until a client comes.
      */
+    @Override
     public void waitConnection() {
         try {
             logger.log(Level.INFO, "[SERVER] Obtaining responseObserver");
@@ -69,17 +68,22 @@ public class MessengerServer {
             public void run() {
                 // Use stderr here since the logger may has been reset by its JVM shutdown hook.
                 System.err.println("*** shutting down gRPC server since JVM is shutting down");
-                MessengerServer.this.shutdown();
+                MessengerServer.this.stop();
                 System.err.println("*** server shut down");
             }
         });
     }
 
     /** Stop serving requests and shutdown resources. */
-    private void shutdown() {
+    private void stop() {
         if (server != null) {
             server.shutdown();
         }
+    }
+
+    @Override
+    public void shutdown() throws InterruptedException {
+        stop();
     }
 
     private class MessengerService extends MessengerGrpc.MessengerImplBase {
