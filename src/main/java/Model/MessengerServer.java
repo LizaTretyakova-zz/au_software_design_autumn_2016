@@ -10,8 +10,12 @@ import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import Controller.Controller;
+
 /**
  * Created by liza on 11.12.16.
+ * Server side implementation of messenger.
+ * Includes implementation of gRPC service.
  */
 public class MessengerServer extends Messenger {
 
@@ -24,13 +28,14 @@ public class MessengerServer extends Messenger {
     protected StreamObserver<InstantMessenger.Message> responseObserver;
 
     /** Create a Message server listening on {@code port} */
-    public MessengerServer(int port, String name) throws IOException {
-        this(ServerBuilder.forPort(port), port, name);
+    public MessengerServer(int port, String name, Controller controller) throws IOException {
+        this(ServerBuilder.forPort(port), port, name, controller);
     }
 
     /** Create a RouteGuide server using serverBuilder as a base and features as data. */
-    public MessengerServer(ServerBuilder<?> serverBuilder, int port, String name) throws IOException {
-        super(name);
+    public MessengerServer(ServerBuilder<?> serverBuilder, int port, String name, Controller controller)
+            throws IOException {
+        super(name, controller);
 
         this.port = port;
         responseObserverGetter = new CompletableFuture<>();

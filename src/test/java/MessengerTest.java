@@ -29,7 +29,7 @@ public class MessengerTest {
         ExecutorService pool = Executors.newCachedThreadPool();
         Runnable task = () -> {
             GUI gui = new GUI();
-            Controller controller = new Controller();
+            Controller controller = new Controller(gui);
             gui.init(controller);
             System.out.println("meow");
             gui.waitUntilExit();

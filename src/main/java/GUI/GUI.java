@@ -11,6 +11,9 @@ import java.io.PrintWriter;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
+/**
+ * What user will see.
+ */
 public class GUI {
     // Connect status constants
     private static final int DISCONNECTED = 0;
@@ -30,6 +33,7 @@ public class GUI {
     private int port = 8980;
     private final AtomicInteger connectionStatus;
     private Boolean isHost = true;
+    private String name = "";
 
     // Various GUI components and info
     private JFrame mainFrame = null;
@@ -130,14 +134,19 @@ public class GUI {
                     return;
                 }
                 connectButton.setEnabled(false);
-                disconnectButton.setEnabled(true);
-                try {
-                    controller.createConnection(
-                            isHost, ipField.getText(), Integer.parseInt(portField.getText()), nameField.getText());
-                    connectionStatus.set(CONNECTED);
-                } catch (IOException ex) {
-                    logger.warning(ex.getMessage());
-                }
+                new Thread(() -> {
+                    try {
+                        controller.createConnection(
+                                isHost, ipField.getText(), Integer.parseInt(portField.getText()), nameField.getText());
+                        connectionStatus.set(CONNECTED);
+                        name = nameField.getText();
+                        disconnectButton.setEnabled(true);
+                        chatLine.setEnabled(true);
+                        sendButton.setEnabled(true);
+                    } catch (IOException ex) {
+                        logger.warning(ex.getMessage());
+                    }
+                }).start();
             }
         });
         connectButton.setEnabled(true);
@@ -149,11 +158,13 @@ public class GUI {
                 if(connectionStatus.intValue() != CONNECTED) {
                     return;
                 }
-                connectButton.setEnabled(true);
                 disconnectButton.setEnabled(false);
+                sendButton.setEnabled(false);
+                chatLine.setEnabled(false);
                 try {
                     controller.disconnect();
                     connectionStatus.set(DISCONNECTED);
+                    connectButton.setEnabled(true);
                 } catch (InterruptedException ex) {
                     logger.warning(ex.getMessage());
                 }
@@ -179,7 +190,7 @@ public class GUI {
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         // Enter messages here.
         JPanel msgPane = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        chatLine = new JTextField();
+        chatLine = new JTextField(10);
         chatLine.setEnabled(false);
         sendButton = new JButton("Send");
         sendButton.setActionCommand("send");
@@ -193,7 +204,7 @@ public class GUI {
                 chatLine.setText("");
                 controller.sendMessage(text);
             }
-            showMessage(text);
+            showMessage(controller.prepareText(name, text));
         });
         sendButton.setEnabled(false);
         msgPane.add(chatLine);
@@ -252,7 +263,7 @@ public class GUI {
     }
 
     // Thread-safe way to append to the chat box
-    private void showMessage(String s) {
+    public void showMessage(String s) {
         synchronized (chatText) {
             chatText.append(s);
         }

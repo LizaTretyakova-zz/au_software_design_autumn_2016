@@ -10,8 +10,11 @@ import io.grpc.ManagedChannelBuilder;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 
+import Controller.Controller;
+
 /**
  * Created by liza on 07.12.16.
+ * Messenger implementation for client side.
  */
 public class MessengerClient extends Messenger {
     private static final Logger logger = Logger.getLogger(MessengerClient.class.getName());
@@ -22,8 +25,8 @@ public class MessengerClient extends Messenger {
     private final CountDownLatch finishLatch;
 
     /** Construct client connecting to HelloWorld server at {@code host:port}. */
-    public MessengerClient(String host, int port, String name) {
-        super(name);
+    public MessengerClient(String host, int port, String name, Controller controller) {
+        super(name, controller);
 
         channel = ManagedChannelBuilder.forAddress(host, port)
                 // Channels are secure by default (via SSL/TLS). For the example we disable TLS to avoid
