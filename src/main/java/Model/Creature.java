@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by liza on 23.12.16.
- * <p>
  * All the moving and living beasts on the field.
  */
 
@@ -36,26 +34,26 @@ public class Creature {
         this.power = power;
     }
 
-    // A lot of getters.
-
     public void setAi(CreatureAI ai) {
         this.ai = ai;
-    }
-
-    public int getX() {
-        return x;
     }
 
     public void setX(int x) {
         this.x = x;
     }
 
-    public int getY() {
-        return y;
-    }
-
     public void setY(int y) {
         this.y = y;
+    }
+
+    // A lot of getters.
+    
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
     }
 
     public char getGlyph() {

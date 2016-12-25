@@ -3,8 +3,6 @@ package Model;
 import java.awt.*;
 
 /**
- * Created by liza on 25.12.16.
- * <p>
  * Useful things on the field. Some of them can let you win.
  */
 public class Stuff {
@@ -35,21 +33,21 @@ public class Stuff {
         return x;
     }
 
-    public void setX(int x) {
-        this.x = x;
-    }
-
     public int getY() {
         return y;
     }
 
+    public int getWinPoints() {
+        return winPoints;
+    }
+
     // Setters.
+
+    public void setX(int x) {
+        this.x = x;
+    }
 
     public void setY(int y) {
         this.y = y;
-    }
-
-    public int getWinPoints() {
-        return winPoints;
     }
 }

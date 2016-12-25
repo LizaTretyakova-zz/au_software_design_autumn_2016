@@ -1,8 +1,6 @@
 package Model;
 
 /**
- * Created by liza on 23.12.16.
- * <p>
  * Rules the creature.
  */
 public abstract class CreatureAI {

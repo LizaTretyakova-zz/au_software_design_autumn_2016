@@ -5,8 +5,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Created by liza on 24.12.16.
- * <p>
  * The trooper.
  */
 public class MobsterAI extends CreatureAI {

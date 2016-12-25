@@ -5,8 +5,6 @@ import asciiPanel.AsciiPanel;
 import java.awt.*;
 
 /**
- * Created by liza on 25.12.16.
- * <p>
  * Crystal mine :3
  */
 public class StuffFactory {

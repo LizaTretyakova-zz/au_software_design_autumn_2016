@@ -1,8 +1,6 @@
 package Model;
 
 /**
- * Created by liza on 24.12.16.
- * <p>
  * Produce creatures.
  */
 

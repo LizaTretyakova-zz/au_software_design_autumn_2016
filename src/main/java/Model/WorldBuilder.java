@@ -1,9 +1,10 @@
 package Model;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+/**
+ * A good way to create the world.
+ */
 public class WorldBuilder {
     private final int width;
     private final int height;
@@ -19,16 +20,6 @@ public class WorldBuilder {
         return new World(tiles);
     }
 
-    private WorldBuilder randomizeTiles() {
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                tiles[x][y] = Math.random() < 0.5 ? Tile.FLOOR : Tile.WALL;
-            }
-        }
-
-        return this;
-    }
-
     public WorldBuilder makeMidiChlorians() {
         int x;
         int y;
@@ -41,7 +32,17 @@ public class WorldBuilder {
                 tiles[x][y] = Tile.MIDI_CHLORIAN;
                 cnt_midis--;
             }
-        } while(cnt_midis > 0);
+        } while (cnt_midis > 0);
+
+        return this;
+    }
+
+    private WorldBuilder randomizeTiles() {
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                tiles[x][y] = Math.random() < 0.5 ? Tile.FLOOR : Tile.WALL;
+            }
+        }
 
         return this;
     }
